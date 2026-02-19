@@ -2,13 +2,54 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Рецепты</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рецепт: {{ dish_name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .recipe-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .ingredient {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+        .ingredient:last-child {
+            border-bottom: none;
+        }
+        .ingredient-name {
+            font-weight: bold;
+            color: #555;
+        }
+        .ingredient-amount {
+            color: #888;
+        }
+    </style>
 </head>
 <body>
-{% for ingredient, amount in recipe.items %}
-    <p>{{ ingredient }}: {{ amount }}</p>
-{% empty %}
-    <p>Такого рецепта не знаю :(</p>
-{% endfor %}
+    <h1>Рецепт: {{ dish_name|capfirst }}</h1>
+    <div class="recipe-container">
+        <h3>Ингредиенты:</h3>
+        {% for ingredient, amount in recipe.items %}
+        <div class="ingredient">
+            <span class="ingredient-name">{{ ingredient }}:</span>
+            <span class="ingredient-amount">{{ amount }}</span>
+        </div>
+        {% endfor %}
+    </div>
 </body>
 </html>
