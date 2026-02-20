@@ -1,54 +1,115 @@
-{% load static %}
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <!-- Basic Page Needs -->
-    <meta charset="utf-8">
-    <title>Title</title>
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <!-- Mobile Specific Metas -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- FONT -->
-    <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="{% static "css/normalize.css" %}">
-    <link rel="stylesheet" href="{% static "css/skeleton.css" %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Остановки общественного транспорта</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #333;
+        }
+        .stations-list {
+            list-style: none;
+            padding: 0;
+        }
+        .station-item {
+            background: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        .station-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .station-details {
+            color: #666;
+            margin-top: 5px;
+        }
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pagination a {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 0 4px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .pagination a:hover {
+            background: #0056b3;
+        }
+        .pagination .current {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 0 4px;
+            background: #6c757d;
+            color: white;
+            border-radius: 4px;
+        }
+        .pagination .disabled {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 0 4px;
+            background: #e9ecef;
+            color: #6c757d;
+            border-radius: 4px;
+            pointer-events: none;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-    <div class="row">
-        <table class="u-full-width">
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Street</th>
-                <th>District</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for station in bus_stations %}
-                <tr>
-                    <td>{{ station.Name }}</td>
-                    <td>{{ station.Street }}</td>
-                    <td>{{ station.District }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+    <h1>Остановки наземного общественного транспорта</h1>
 
-        {% if page.has_previous %}
-            <a class="button button-primary" href="?page={{ page.previous_page_number }}">⟵</a>
-        {% endif %}
-        <a class="button disabled" href="">{{ page.number }}</a>
-        {% if page.has_next %}
-            <a class="button button-primary" href="?page={{ page.next_page_number }}">⟶</a>
-        {% endif %}
+    <ul class="stations-list">
+        {% for station in bus_stations %}
+        <li class="station-item">
+            <div class="station-name">{{ station.Name }}</div>
+            <div class="station-details">
+                {% if station.Street %}Улица: {{ station.Street }}<br>{% endif %}
+                {% if station.District %}Район: {{ station.District }}{% endif %}
+            </div>
+        </li>
+        {% empty %}
+        <li>Нет данных об остановках</li>
+        {% endfor %}
+    </ul>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; Первая</a>
+                <a href="?page={{ page_obj.previous_page_number }}">Предыдущая</a>
+            {% else %}
+                <span class="disabled">&laquo; Первая</span>
+                <span class="disabled">Предыдущая</span>
+            {% endif %}
+
+            <span class="current">
+                Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Следующая</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">Последняя &raquo;</a>
+            {% else %}
+                <span class="disabled">Следующая</span>
+                <span class="disabled">Последняя &raquo;</span>
+            {% endif %}
+        </span>
     </div>
-</div>
+
+    <p>Всего остановок: {{ page_obj.paginator.count }}</p>
 </body>
 </html>
