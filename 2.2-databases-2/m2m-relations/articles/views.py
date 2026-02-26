@@ -1,14 +1,24 @@
 from django.shortcuts import render
-
-from articles.models import Article
+from .models import Article
 
 
 def articles_list(request):
     template = 'articles/news.html'
-    context = {}
 
-    # используйте этот параметр для упорядочивания результатов
-    # https://docs.djangoproject.com/en/3.1/ref/models/querysets/#django.db.models.query.QuerySet.order_by
-    ordering = '-published_at'
+    # Получаем статьи с оптимизацией запросов
+    articles = Article.objects.prefetch_related('scopes__tag').order_by('-published_at')
+
+    # Создаем новый атрибут для отсортированных scopes, не заменяя оригинальный
+    for article in articles:
+        # Получаем все связи
+        scopes_list = list(article.scopes.all())
+        # Сортируем: сначала основные, потом по имени тега
+        scopes_list.sort(key=lambda x: (not x.is_main, x.tag.name))
+        # Добавляем новый атрибут, не заменяя существующий scopes
+        article.sorted_scopes = scopes_list
+
+    context = {
+        'object_list': articles,
+    }
 
     return render(request, template, context)

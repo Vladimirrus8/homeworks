@@ -15,7 +15,8 @@
               <a href="#">{{ article.title }}</a>
             </h4>
             <p class="card-text">{{ article.text }}</p>
-            {% for scope in article.scopes.all %}
+            <!-- Используем новый атрибут sorted_scopes -->
+            {% for scope in article.sorted_scopes %}
               <span class="badge {% if scope.is_main %}badge-primary{% else %}badge-secondary{% endif %}">{{ scope.tag.name }}</span>
             {% endfor %}
           </div>
