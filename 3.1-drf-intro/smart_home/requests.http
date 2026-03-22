@@ -2,13 +2,13 @@
 
 @baseUrl = http://localhost:8000/api
 
-# получение датчиков
+# Получение списка датчиков
 GET {{baseUrl}}/sensors/
 Content-Type: application/json
 
 ###
 
-# создание датчика
+# Создание датчика
 POST {{baseUrl}}/sensors/
 Content-Type: application/json
 
@@ -19,7 +19,18 @@ Content-Type: application/json
 
 ###
 
-# обновление датчика
+# Создание второго датчика
+POST {{baseUrl}}/sensors/
+Content-Type: application/json
+
+{
+  "name": "DHT22",
+  "description": "Датчик в спальне"
+}
+
+###
+
+# Обновление датчика
 PATCH {{baseUrl}}/sensors/1/
 Content-Type: application/json
 
@@ -29,7 +40,7 @@ Content-Type: application/json
 
 ###
 
-# добавление измерения
+# Добавление измерения (без изображения)
 POST {{baseUrl}}/measurements/
 Content-Type: application/json
 
@@ -40,6 +51,83 @@ Content-Type: application/json
 
 ###
 
-# получение информации по датчику
+# Добавление еще одного измерения (без изображения)
+POST {{baseUrl}}/measurements/
+Content-Type: application/json
+
+{
+  "sensor": 1,
+  "temperature": 23.5
+}
+
+###
+
+# Добавление измерения для второго датчика
+POST {{baseUrl}}/measurements/
+Content-Type: application/json
+
+{
+  "sensor": 2,
+  "temperature": 21.8
+}
+
+###
+
+# Добавление измерения с изображением (дополнительное задание)
+POST {{baseUrl}}/measurements/
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="sensor"
+
+1
+------WebKitFormBoundary
+Content-Disposition: form-data; name="temperature"
+
+22.7
+------WebKitFormBoundary
+Content-Disposition: form-data; name="image"; filename="test.jpg"
+Content-Type: image/jpeg
+
+< ./test.jpg
+------WebKitFormBoundary--
+
+###
+
+# Получение детальной информации по датчику (с измерениями)
 GET {{baseUrl}}/sensors/1/
 Content-Type: application/json
+
+###
+
+# Получение детальной информации по второму датчику
+GET {{baseUrl}}/sensors/2/
+Content-Type: application/json
+
+###
+
+# Получение информации по несуществующему датчику (должна быть ошибка 404)
+GET {{baseUrl}}/sensors/999/
+Content-Type: application/json
+
+###
+
+# Попытка создать измерение с некорректной температурой (должна быть ошибка валидации)
+POST {{baseUrl}}/measurements/
+Content-Type: application/json
+
+{
+  "sensor": 1,
+  "temperature": 150
+}
+
+###
+
+# Попытка создать измерение для несуществующего датчика (должна быть ошибка)
+POST {{baseUrl}}/measurements/
+Content-Type: application/json
+
+{
+  "sensor": 999,
+  "temperature": 22.5
+}
