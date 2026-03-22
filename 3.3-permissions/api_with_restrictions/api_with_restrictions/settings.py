@@ -30,6 +30,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+# noinspection SpellCheckingInspection
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -38,10 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Third party apps
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
 
+    # Local apps
     'advertisements',
 ]
 
@@ -73,10 +76,23 @@ TEMPLATES = [
     },
 ]
 
+# Настройки REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-    ]
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '10/minute',
+        'user': '20/minute',
+    }
 }
 
 WSGI_APPLICATION = 'api_with_restrictions.wsgi.application'
@@ -89,6 +105,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'netology_classified_ads',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }

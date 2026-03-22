@@ -1,42 +1,142 @@
 # примеры API-запросов
 
-@baseUrl = https://localhost:8000/api
+@baseUrl = http://localhost:8000/api
+@token = 40547f75ee4a2f92c4d7f99134357062d76fbc69
+@otherUserToken = другой_токен_пользователя
 
-# получение объявлений
+### 1. ПОЛУЧЕНИЕ ТОКЕНА
+POST {{baseUrl}}/api-token-auth/
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "password": "admin123"
+}
+
+###
+
+### 2. ПОЛУЧЕНИЕ СПИСКА ОБЪЯВЛЕНИЙ
 GET {{baseUrl}}/advertisements/
 Content-Type: application/json
 
 ###
 
-# создание объявления
+### 3. ФИЛЬТРАЦИЯ ПО ДАТЕ
+GET {{baseUrl}}/advertisements/?created_at_before=2020-10-01
+Content-Type: application/json
+
+###
+
+### 4. ФИЛЬТРАЦИЯ ПО ДАТЕ
+GET {{baseUrl}}/advertisements/?created_at_after=2020-01-01&created_at_before=2020-12-31
+Content-Type: application/json
+
+###
+
+### 5. ФИЛЬТРАЦИЯ ПО СТАТУСУ
+GET {{baseUrl}}/advertisements/?status=OPEN
+Content-Type: application/json
+
+###
+
+### 6. СОЗДАНИЕ ОБЪЯВЛЕНИЯ
 POST {{baseUrl}}/advertisements/
 Content-Type: application/json
-Authorization: Token 902ef055a9ac93f18327f1f9c45ab059f1a62c7d
+Authorization: Token {{token}}
 
 {
-  "title": "Шкаф IKEA",
-  "description": "Срочно"
+    "title": "Шкаф IKEA",
+    "description": "Срочно продам",
+    "status": "OPEN"
 }
 
 ###
 
-# попытка поменять объявление
+### 7. СОЗДАНИЕ ЧЕРНОВИКА
+POST {{baseUrl}}/advertisements/
+Content-Type: application/json
+Authorization: Token {{token}}
+
+{
+    "title": "Черновик объявления",
+    "description": "Еще не готово к публикации",
+    "status": "DRAFT"
+}
+
+###
+
+### 8. ПОЛУЧЕНИЕ КОНКРЕТНОГО ОБЪЯВЛЕНИЯ
+GET {{baseUrl}}/advertisements/1/
+Content-Type: application/json
+
+###
+
+### 9. ОБНОВЛЕНИЕ ОБЪЯВЛЕНИЯ
 PATCH {{baseUrl}}/advertisements/1/
 Content-Type: application/json
-Authorization: Token 902ef055a9ac93f18327f1f9c45ab059f1a62c7d
+Authorization: Token {{token}}
 
 {
-  "status": "CLOSED"
+    "status": "CLOSED"
 }
 
 ###
 
-# фильтрация по создателю
-GET {{baseUrl}}/advertisements/?creator=3
-Content-Type: application/json
+### 10. УДАЛЕНИЕ ОБЪЯВЛЕНИЯ
+DELETE {{baseUrl}}/advertisements/1/
+Authorization: Token {{token}}
 
 ###
 
-# фильтрация по дате
-GET {{baseUrl}}/advertisements/?created_at_before=2020-10-01
+### 11. ДОБАВЛЕНИЕ В ИЗБРАННОЕ
+POST {{baseUrl}}/advertisements/2/favorite/
+Authorization: Token {{token}}
+
+###
+
+### 12. УДАЛЕНИЕ ИЗ ИЗБРАННОГО
+POST {{baseUrl}}/advertisements/2/unfavorite/
+Authorization: Token {{token}}
+
+###
+
+### 13. ПОЛУЧЕНИЕ СПИСКА ИЗБРАННЫХ ОБЪЯВЛЕНИЙ
+GET {{baseUrl}}/advertisements/favorites_list/
+Authorization: Token {{token}}
+
+###
+
+### 14. ПРОВЕРКА ВАЛИДАЦИИ
+POST {{baseUrl}}/advertisements/
+Content-Type: application/json
+Authorization: Token {{token}}
+
+{
+    "title": "11-е открытое объявление",
+    "description": "Должно быть отклонено",
+    "status": "OPEN"
+}
+
+###
+
+### 15. ПОПЫТКА ДОБАВИТЬ СВОЕ ОБЪЯВЛЕНИЕ В ИЗБРАННОЕ
+POST {{baseUrl}}/advertisements/1/favorite/
+Authorization: Token {{token}}
+
+###
+
+### 16. НЕПРАВИЛЬНЫЙ ТОКЕН
+POST {{baseUrl}}/advertisements/
+Content-Type: application/json
+Authorization: Token wrong_token_format
+
+{
+    "title": "Тест",
+    "description": "Описание"
+}
+
+###
+
+### 17. ДОСТУП К ЧУЖОМУ ЧЕРНОВИКУ
+GET {{baseUrl}}/advertisements/3/
 Content-Type: application/json
