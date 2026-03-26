@@ -1,4 +1,5 @@
-django
+pip install pytest pytest-django model_bakery factory-boydjango
 djangorestframework
 django-filter
 psycopg2-binary
+model_bakery
